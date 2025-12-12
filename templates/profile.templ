@@ -1,0 +1,58 @@
+package templates
+
+templ ProfilePage(email, name, role string) {
+    @Base("Profile", profileContent(email, name, role))
+}
+
+templ profileContent(email, name, role string) {
+    @AuthenticatedNav(email, role)
+
+    <div class="content">
+        <div style="max-width: 800px; margin: 0 auto;">
+            <h1>Your Profile</h1>
+            <p class="text-muted mb-3">View and manage your account information</p>
+
+            <div class="card">
+                <h2>Account Information</h2>
+                <table style="margin-top: 1rem;">
+                    <tr>
+                        <td style="width: 30%; font-weight: 600;">Name</td>
+                        <td>{ name }</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: 600;">Email</td>
+                        <td>{ email }</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: 600;">Role</td>
+                        <td>
+                            if role == "admin" {
+                                <span class="badge badge-admin">{ role }</span>
+                            } else if role == "moderator" {
+                                <span class="badge badge-moderator">{ role }</span>
+                            } else {
+                                <span class="badge badge-user">{ role }</span>
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: 600;">Account Status</td>
+                        <td><span style="color: #28a745; font-weight: 500;">✓ Active</span></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="card">
+                <h2>Account Actions</h2>
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button class="btn">Edit Profile</button>
+                    <button class="btn btn-secondary">Change Password</button>
+                </div>
+            </div>
+
+            <div style="margin-top: 2rem;">
+                <a href="/dashboard" class="btn btn-secondary">← Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+}

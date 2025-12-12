@@ -1,0 +1,19 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    queries:
+      - "sqlc/user.sql"
+      - "sqlc/movie.sql"
+      - "sqlc/review.sql"
+      - "sqlc/watchlist.sql"
+    schema: "migrations/"
+    gen:
+      go:
+        package: "repository"
+        out: "repository"
+        sql_package: "pgx/v5"
+        emit_json_tags: true
+        emit_prepared_queries: false
+        emit_interface: false
+        emit_exact_table_names: false
+        emit_empty_slices: true

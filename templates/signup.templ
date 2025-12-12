@@ -1,0 +1,64 @@
+package templates
+
+templ SignupPage() {
+    @Base("Sign Up", signupContent(""))
+}
+
+templ SignupPageWithError(errorMsg string) {
+    @Base("Sign Up", signupContent(errorMsg))
+}
+
+templ signupContent(errorMsg string) {
+    @PublicNav()
+    <div class="content">
+        <div style="max-width: 450px; margin: 3rem auto;">
+            <h1 style="text-align: center; margin-bottom: 2rem;">Join BattleNet</h1>
+
+            if errorMsg != "" {
+                <div class="alert alert-error">
+                    { errorMsg }
+                </div>
+            }
+
+            <div class="card">
+                <form method="POST" action="/signup">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" required placeholder="your@email.com" autofocus>
+                    </div>
+                    <div class="form-group">
+                        <label for="first_name">First Name</label>
+                        <input type="text" id="first_name" name="first_name" required placeholder="Your first name">
+                    </div>
+                    <div class="form-group">
+                        <label for="last_name">Last Name</label>
+                        <input type="text" id="last_name" name="last_name" required placeholder="Your last name">
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" required placeholder="Choose a username">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required placeholder="At least 6 characters" minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm_password">Confirm Password</label>
+                        <input type="password" id="confirm_password" name="confirm_password" required placeholder="Re-enter your password" minlength="6">
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%;">Create Account</button>
+                </form>
+            </div>
+
+            <p style="text-align: center; margin-top: 1.5rem;">
+                Already have an account?
+                <a href="/login" style="color: #667eea; font-weight: 500;">Login here</a>
+            </p>
+
+            <div class="alert alert-info" style="margin-top: 2rem;">
+                <strong>Note:</strong> New users are automatically assigned the "user" role.
+                You'll be logged in automatically after signup.
+            </div>
+        </div>
+    </div>
+}

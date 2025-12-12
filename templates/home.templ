@@ -1,0 +1,55 @@
+package templates
+
+templ HomePage() {
+    @Base("Welcome to BattleNet - Discover Amazing Films", homeContent())
+}
+
+templ homeContent() {
+    @PublicNav()
+    <div class="content" style="text-align: center; padding: 4rem 2rem;">
+        <h1 style="font-size: 3rem; margin-bottom: 1rem; color: #333;">
+            Welcome to BattleNet
+        </h1>
+        <p style="font-size: 1.25rem; color: #6c757d; margin-bottom: 2rem;">
+            Your ultimate destination for movie discovery, reviews, and watchlists
+        </p>
+
+        <div style="margin-top: 2rem;">
+            <a href="/login" class="btn" style="margin-right: 1rem; font-size: 1.1rem; padding: 1rem 2rem;">
+                Login
+            </a>
+            <a href="/signup" class="btn btn-secondary" style="font-size: 1.1rem; padding: 1rem 2rem;">
+                Sign Up
+            </a>
+        </div>
+
+        <div style="margin-top: 4rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; max-width: 900px; margin-left: auto; margin-right: auto;">
+            <div class="card" style="text-align: center;">
+                <h3>🎬 Movie Database</h3>
+                <p class="text-muted">Browse thousands of movies with detailed information</p>
+            </div>
+            <div class="card" style="text-align: center;">
+                <h3>⭐ Rate & Review</h3>
+                <p class="text-muted">Share your opinions and read others' reviews</p>
+            </div>
+            <div class="card" style="text-align: center;">
+                <h3>📝 Watchlists</h3>
+                <p class="text-muted">Create personalized watchlists for future viewing</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 3rem; padding: 2rem; background: #f8f9fa; border-radius: 8px; max-width: 600px; margin-left: auto; margin-right: auto;">
+            <h3 style="margin-bottom: 1rem;">Test Accounts</h3>
+            <table style="font-size: 0.9rem; margin: 0 auto;">
+                <tr>
+                    <td><strong>Admin:</strong></td>
+                    <td>admin@movieapp.com / admin123</td>
+                </tr>
+                <tr>
+                    <td><strong>User:</strong></td>
+                    <td>user@movieapp.com / user123</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+}

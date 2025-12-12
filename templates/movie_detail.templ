@@ -1,0 +1,143 @@
+package templates
+
+import (
+    "battleNet/models"
+    "fmt"
+)
+
+templ MovieDetailPage(email, role string, movie models.Movie, reviews []models.Review, inWatchlist bool) {
+    @Base(movie.Title + " - Movie Details", movieDetailContent(email, role, movie, reviews, inWatchlist))
+}
+
+templ movieDetailContent(email, role string, movie models.Movie, reviews []models.Review, inWatchlist bool) {
+    @AuthenticatedNav(email, role)
+
+<form method="POST" action="/watchlist/add">
+        <input type="hidden" name="movie_id" value={ movie.MovieID.String() }>
+        if inWatchlist {
+            <button type="submit" class="btn" style="background: #dc3545;">Remove from Watchlist</button>
+        } else {
+            <button type="submit" class="btn" style="background: #28a745;">+ Add to Watchlist</button>
+        }
+    </form>
+
+    <div class="content">
+        <a href="/movies" class="btn btn-secondary mb-3">← Back to Movies</a>
+
+        <div class="card">
+            <div style="display: grid; grid-template-columns: 300px 1fr; gap: 2rem;">
+                <!-- Movie Poster -->
+                <div>
+                    if movie.PosterPath != nil && *movie.PosterPath != "" {
+                        <img src={ *movie.PosterPath } alt={ movie.Title } class="movie-poster">
+                    } else {
+                        <div style="width: 100%; height: 450px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #666; border-radius: 8px;">
+                            No Image Available
+                        </div>
+                    }
+                </div>
+
+                <!-- Movie Details -->
+                <div>
+                    <h1>{ movie.Title }</h1>
+
+                    <div style="display: flex; gap: 2rem; margin: 1.5rem 0;">
+                        if movie.VoteAverage != nil {
+                            <div>
+                                <strong>Rating:</strong>
+                                <span class="rating"> { Printf("%.1f", *movie.VoteAverage) }/10</span>
+                            </div>
+                        }
+                        if movie.VoteCount != nil {
+                            <div>
+                                <strong>Votes:</strong> { *movie.VoteCount }
+                            </div>
+                        }
+                        if movie.Runtime != nil {
+                            <div>
+                                <strong>Runtime:</strong> { *movie.Runtime } min
+                            </div>
+                        }
+                    </div>
+
+                    if movie.ReleaseDate != nil {
+                        <p><strong>Release Date:</strong> { movie.ReleaseDate.Format("January 2, 2006") }</p>
+                    }
+
+                    if movie.Status != nil {
+                        <p><strong>Status:</strong> { *movie.Status }</p>
+                    }
+
+                    <div style="margin: 1.5rem 0;">
+                        <h3>Overview</h3>
+                        if movie.Overview != nil {
+                            <p style="line-height: 1.6;">{ *movie.Overview }</p>
+                        } else {
+                            <p class="text-muted">No overview available.</p>
+                        }
+                    </div>
+
+                    <form method="POST" action="/watchlist/add">
+                        <input type="hidden" name="movie_id" value={ movie.MovieID.String() }>
+                        <button type="submit" class="btn" style="background: #28a745;">+ Add to Watchlist</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reviews Section -->
+        <div class="card">
+            <h2>Reviews</h2>
+
+            <!-- Add Review Form -->
+            <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px;">
+                <h3>Write a Review</h3>
+                <form method="POST" action="/reviews">
+                    <input type="hidden" name="movie_id" value={ movie.MovieID.String() }>
+                    <div class="form-group">
+                        <label for="rating">Rating (1-10)</label>
+                        <select id="rating" name="rating" required>
+                            <option value="">Select rating</option>
+                            for i := 1; i <= 10; i++ {
+                                <option value={ fmt.Sprintf("%d", i) }>{ i }</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="title">Review Title</label>
+                        <input type="text" id="title" name="title" required placeholder="Give your review a title">
+                    </div>
+                    <div class="form-group">
+                        <label for="content">Review Content</label>
+                        <textarea id="content" name="content" rows="4" required placeholder="Write your review here..."></textarea>
+                    </div>
+                    <button type="submit" class="btn">Submit Review</button>
+                </form>
+            </div>
+
+            <!-- Reviews List -->
+            if len(reviews) > 0 {
+                <div>
+                    <h3>User Reviews ({ len(reviews) })</h3>
+                    for _, review := range reviews {
+                        <div style="padding: 1.5rem; border: 1px solid #e0e0e0; border-radius: 8px; margin-bottom: 1rem;">
+                            <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 1rem;">
+                                <div>
+                                    <strong>{ review.Username }</strong>
+                                    <span class="rating" style="margin-left: 1rem;">{ review.Rating }/10</span>
+                                </div>
+                                <span class="text-muted">{ review.CreatedAt.Format("January 2, 2006") }</span>
+                            </div>
+                            <h4 style="margin-bottom: 0.5rem;">{ review.Title }</h4>
+                            <p style="line-height: 1.6;">{ review.Content }</p>
+                        </div>
+                    }
+                </div>
+            } else {
+                <div style="text-align: center; padding: 2rem;">
+                    <p class="text-muted">No reviews yet. Be the first to review this movie!</p>
+                </div>
+            }
+        </div>
+    </div>
+}

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="com.obiscr.chatgpt.settings.EasyCodeState">
+    <option name="projectFiles" value="$PROJECT_DIR$/cmd/server/main.go;C:/Users/Juratei/GolandProjects/battleNet/internal/config/config.go;C:/Users/Juratei/GolandProjects/battleNet/internal/repository/database.go;C:/Users/Juratei/GolandProjects/battleNet/internal/repository/queries.sql;C:/Users/Juratei/GolandProjects/battleNet/migrations/00001_create_initial_tables.sql;C:/Users/Juratei/GolandProjects/battleNet/migrations/00002_add_foreign_keys_indexes.sql;C:/Users/Juratei/GolandProjects/battleNet/migrations/00003_insert_initial_data.sql" />
+  </component>
+</project>

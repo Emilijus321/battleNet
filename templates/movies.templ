@@ -1,0 +1,81 @@
+package templates
+
+import "battleNet/models"
+
+templ MoviesPage(email, role string, movies []models.Movie) {
+    @Base("Movies", moviesContent(email, role, movies))
+}
+
+templ moviesContent(email, role string, movies []models.Movie) {
+    @AuthenticatedNav(email, role)
+
+    <div class="content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <div>
+                <h1>Movies</h1>
+                <p class="text-muted">Browse our movie collection</p>
+            </div>
+            if role == "admin" {
+                <a href="/admin/movies/create" class="btn">+ Add Movie</a>
+            }
+        </div>
+
+        <div class="movie-grid">
+            for _, movie := range movies {
+                <div class="card movie-card">
+                    if movie.PosterPath != nil && *movie.PosterPath != "" {
+                        <img src={ *movie.PosterPath } alt={ movie.Title } class="movie-poster">
+                    } else {
+                        <div style="width: 100%; height: 400px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #666; border-radius: 8px;">
+                            No Image Available
+                        </div>
+                    }
+                    <div style="padding: 1rem 0;">
+                        <h3>{ movie.Title }</h3>
+                        <p style="color: #666; margin: 0.5rem 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                            if movie.Overview != nil {
+                                { *movie.Overview }
+                            } else {
+                                No overview available.
+                            }
+                        </p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                            if movie.VoteAverage != nil {
+                                <span class="rating">⭐ { Printf("%.1f", *movie.VoteAverage) }</span>
+                            } else {
+                                <span class="rating">⭐ N/A</span>
+                            }
+                            if movie.VoteCount != nil {
+                                <span style="color: #666;">{ *movie.VoteCount } votes</span>
+                            }
+                        </div>
+                        if movie.ReleaseDate != nil {
+                            <p style="margin-top: 0.5rem; color: #666; font-size: 0.9rem;">
+                                Released: { movie.ReleaseDate.Format("January 2, 2006") }
+                            </p>
+                        }
+                        <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                            <a href={ "/movies/" + movie.MovieID.String() } class="btn" style="flex: 1; text-align: center;">
+                                View Details
+                            </a>
+                            <form method="POST" action="/watchlist/add" style="display: inline;">
+                                <input type="hidden" name="movie_id" value={ movie.MovieID.String() }>
+                                <button type="submit" class="btn" style="background: #28a745;">+ Watchlist</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        if len(movies) == 0 {
+            <div class="card" style="text-align: center; padding: 3rem;">
+                <h3>No movies found</h3>
+                <p class="text-muted">There are no movies in the database yet.</p>
+                if role == "admin" {
+                    <a href="/admin/movies/create" class="btn mt-2">Add First Movie</a>
+                }
+            </div>
+        }
+    </div>
+}
