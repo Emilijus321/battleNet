@@ -1,10 +1,10 @@
 package templates
 
-templ ProfilePage(email, name, role string) {
-    @Base("Profile", profileContent(email, name, role))
+templ ProfilePage(email, name, role, username string) {
+    @Base("Profile", profileContent(email, name, role, username))
 }
 
-templ profileContent(email, name, role string) {
+templ profileContent(email, name, role, username string) {
     @AuthenticatedNav(email, role)
 
     <div class="content">
@@ -22,6 +22,10 @@ templ profileContent(email, name, role string) {
                     <tr>
                         <td style="font-weight: 600;">Email</td>
                         <td>{ email }</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: 600;">Username</td>
+                        <td>{ username }</td>
                     </tr>
                     <tr>
                         <td style="font-weight: 600;">Role</td>
@@ -45,8 +49,8 @@ templ profileContent(email, name, role string) {
             <div class="card">
                 <h2>Account Actions</h2>
                 <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-                    <button class="btn">Edit Profile</button>
-                    <button class="btn btn-secondary">Change Password</button>
+                    <a href="/profile/edit" class="btn">Edit Profile</a>
+                    <a href="/profile/change-password" class="btn btn-secondary">Change Password</a>
                 </div>
             </div>
 

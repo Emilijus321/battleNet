@@ -1,10 +1,10 @@
 package templates
 
-templ DashboardPage(email, userID, role, name string) {
-    @Base("Dashboard", dashboardContent(email, userID, role, name))
+templ DashboardPage(email, userID, role, name, username string) {
+    @Base("Dashboard", dashboardContent(email, userID, role, name, username))
 }
 
-templ dashboardContent(email, userID, role, name string) {
+templ dashboardContent(email, userID, role, name, username string) {
     @AuthenticatedNav(email, role)
 
     <div class="content">
@@ -17,6 +17,7 @@ templ dashboardContent(email, userID, role, name string) {
                 <p><strong>User ID:</strong> { userID }</p>
                 <p><strong>Email:</strong> { email }</p>
                 <p><strong>Name:</strong> { name }</p>
+                <p><strong>Username:</strong> { username }</p>
                 <p><strong>Role:</strong>
                     if role == "admin" {
                         <span class="badge badge-admin">{ role }</span>
@@ -34,8 +35,14 @@ templ dashboardContent(email, userID, role, name string) {
                 <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                     <a href="/movies" class="btn">Browse Movies</a>
                     <a href="/watchlist" class="btn">My Watchlist</a>
-                    if role == "admin" || role == "moderator" {
-                        <a href="/admin/movies" class="btn">Manage Movies</a>
+
+                    if role == "moderator" {
+                        <a href="/moderator/users" class="btn btn-moderator">Manage Users</a>
+                    }
+
+                    if role == "admin" {
+                        <a href="/admin/movies" class="btn btn-admin">Manage Movies</a>
+                        <a href="/search" class="btn btn-admin" >Search TMDB </a>
                     }
                 </div>
             </div>
@@ -51,11 +58,11 @@ templ dashboardContent(email, userID, role, name string) {
                 </div>
                 <div style="padding: 1rem; background: #f8f9fa; border-radius: 6px;">
                     <span class="badge badge-moderator" style="margin-bottom: 0.5rem;">Moderator</span>
-                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">User access + content moderation capabilities</p>
+                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">User access + User management (CRUD)</p>
                 </div>
                 <div style="padding: 1rem; background: #f8f9fa; border-radius: 6px;">
                     <span class="badge badge-admin" style="margin-bottom: 0.5rem;">Admin</span>
-                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">Full system access including user management</p>
+                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">Full system access including movie management (CRUD)</p>
                 </div>
             </div>
         </div>

@@ -42,7 +42,7 @@ func Base(title string, content templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><style>\r\n\t\t\t\t* {\r\n\t\t\t\t\tmargin: 0;\r\n\t\t\t\t\tpadding: 0;\r\n\t\t\t\t\tbox-sizing: border-box;\r\n\t\t\t\t}\r\n\t\t\t\tbody {\r\n\t\t\t\t\tfont-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\r\n\t\t\t\t\tline-height: 1.6;\r\n\t\t\t\t\tcolor: #333;\r\n\t\t\t\t\tbackground: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\r\n\t\t\t\t\tmin-height: 100vh;\r\n\t\t\t\t\tpadding: 2rem;\r\n\t\t\t\t}\r\n\t\t\t\t.container {\r\n\t\t\t\t\tmax-width: 1200px;\r\n\t\t\t\t\tmargin: 0 auto;\r\n\t\t\t\t\tbackground: white;\r\n\t\t\t\t\tborder-radius: 12px;\r\n\t\t\t\t\tbox-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);\r\n\t\t\t\t\toverflow: hidden;\r\n\t\t\t\t}\r\n\t\t\t\tnav {\r\n\t\t\t\t\tbackground: #667eea;\r\n\t\t\t\t\tpadding: 1rem 2rem;\r\n\t\t\t\t\tdisplay: flex;\r\n\t\t\t\t\tjustify-content: space-between;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t}\r\n\t\t\t\tnav a {\r\n\t\t\t\t\tcolor: white;\r\n\t\t\t\t\ttext-decoration: none;\r\n\t\t\t\t\tmargin-right: 1.5rem;\r\n\t\t\t\t\tfont-weight: 500;\r\n\t\t\t\t\ttransition: opacity 0.3s;\r\n\t\t\t\t}\r\n\t\t\t\tnav a:hover {\r\n\t\t\t\t\topacity: 0.8;\r\n\t\t\t\t}\r\n\t\t\t\t.nav-links {\r\n\t\t\t\t\tdisplay: flex;\r\n\t\t\t\t\talign-items: center;\r\n\t\t\t\t}\r\n\t\t\t\t.content {\r\n\t\t\t\t\tpadding: 2rem;\r\n\t\t\t\t}\r\n\t\t\t\t.btn {\r\n\t\t\t\t\tbackground: #667eea;\r\n\t\t\t\t\tcolor: white;\r\n\t\t\t\t\tpadding: 0.75rem 1.5rem;\r\n\t\t\t\t\tborder: none;\r\n\t\t\t\t\tborder-radius: 6px;\r\n\t\t\t\t\tcursor: pointer;\r\n\t\t\t\t\tfont-size: 1rem;\r\n\t\t\t\t\tfont-weight: 500;\r\n\t\t\t\t\ttext-decoration: none;\r\n\t\t\t\t\tdisplay: inline-block;\r\n\t\t\t\t\ttransition: background 0.3s;\r\n\t\t\t\t}\r\n\t\t\t\t.btn:hover {\r\n\t\t\t\t\tbackground: #5568d3;\r\n\t\t\t\t}\r\n\t\t\t\t.btn-secondary {\r\n\t\t\t\t\tbackground: #6c757d;\r\n\t\t\t\t}\r\n\t\t\t\t.btn-secondary:hover {\r\n\t\t\t\t\tbackground: #5a6268;\r\n\t\t\t\t}\r\n\t\t\t\t.btn-danger {\r\n\t\t\t\t\tbackground: #dc3545;\r\n\t\t\t\t}\r\n\t\t\t\t.btn-danger:hover {\r\n\t\t\t\t\tbackground: #c82333;\r\n\t\t\t\t}\r\n\t\t\t\t.alert {\r\n\t\t\t\t\tpadding: 1rem;\r\n\t\t\t\t\tborder-radius: 6px;\r\n\t\t\t\t\tmargin-bottom: 1rem;\r\n\t\t\t\t}\r\n\t\t\t\t.alert-error {\r\n\t\t\t\t\tbackground: #f8d7da;\r\n\t\t\t\t\tcolor: #721c24;\r\n\t\t\t\t\tborder: 1px solid #f5c6cb;\r\n\t\t\t\t}\r\n\t\t\t\t.alert-success {\r\n\t\t\t\t\tbackground: #d4edda;\r\n\t\t\t\t\tcolor: #155724;\r\n\t\t\t\t\tborder: 1px solid #c3e6cb;\r\n\t\t\t\t}\r\n\t\t\t\t.alert-info {\r\n\t\t\t\t\tbackground: #d1ecf1;\r\n\t\t\t\t\tcolor: #0c5460;\r\n\t\t\t\t\tborder: 1px solid #bee5eb;\r\n\t\t\t\t}\r\n\t\t\t\t.form-group {\r\n\t\t\t\t\tmargin-bottom: 1.5rem;\r\n\t\t\t\t}\r\n\t\t\t\t.form-group label {\r\n\t\t\t\t\tdisplay: block;\r\n\t\t\t\t\tmargin-bottom: 0.5rem;\r\n\t\t\t\t\tfont-weight: 500;\r\n\t\t\t\t\tcolor: #555;\r\n\t\t\t\t}\r\n\t\t\t\t.form-group input {\r\n\t\t\t\t\twidth: 100%;\r\n\t\t\t\t\tpadding: 0.75rem;\r\n\t\t\t\t\tborder: 1px solid #ddd;\r\n\t\t\t\t\tborder-radius: 6px;\r\n\t\t\t\t\tfont-size: 1rem;\r\n\t\t\t\t}\r\n\t\t\t\t.form-group input:focus {\r\n\t\t\t\t\toutline: none;\r\n\t\t\t\t\tborder-color: #667eea;\r\n\t\t\t\t\tbox-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);\r\n\t\t\t\t}\r\n\t\t\t\t.card {\r\n\t\t\t\t\tbackground: white;\r\n\t\t\t\t\tborder: 1px solid #e0e0e0;\r\n\t\t\t\t\tborder-radius: 8px;\r\n\t\t\t\t\tpadding: 1.5rem;\r\n\t\t\t\t\tmargin-bottom: 1rem;\r\n\t\t\t\t\tbox-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);\r\n\t\t\t\t}\r\n\t\t\t\t.badge {\r\n\t\t\t\t\tdisplay: inline-block;\r\n\t\t\t\t\tpadding: 0.35rem 0.65rem;\r\n\t\t\t\t\tfont-size: 0.875rem;\r\n\t\t\t\t\tfont-weight: 600;\r\n\t\t\t\t\tborder-radius: 4px;\r\n\t\t\t\t\ttext-transform: uppercase;\r\n\t\t\t\t}\r\n\t\t\t\t.badge-admin {\r\n\t\t\t\t\tbackground: #dc3545;\r\n\t\t\t\t\tcolor: white;\r\n\t\t\t\t}\r\n\t\t\t\t.badge-moderator {\r\n\t\t\t\t\tbackground: #ffc107;\r\n\t\t\t\t\tcolor: #333;\r\n\t\t\t\t}\r\n\t\t\t\t.badge-user {\r\n\t\t\t\t\tbackground: #28a745;\r\n\t\t\t\t\tcolor: white;\r\n\t\t\t\t}\r\n\t\t\t\ttable {\r\n\t\t\t\t\twidth: 100%;\r\n\t\t\t\t\tborder-collapse: collapse;\r\n\t\t\t\t}\r\n\t\t\t\tth, td {\r\n\t\t\t\t\tpadding: 1rem;\r\n\t\t\t\t\ttext-align: left;\r\n\t\t\t\t\tborder-bottom: 1px solid #e0e0e0;\r\n\t\t\t\t}\r\n\t\t\t\tth {\r\n\t\t\t\t\tbackground: #f8f9fa;\r\n\t\t\t\t\tfont-weight: 600;\r\n\t\t\t\t\tcolor: #555;\r\n\t\t\t\t}\r\n\t\t\t\ttr:hover {\r\n\t\t\t\t\tbackground: #f8f9fa;\r\n\t\t\t\t}\r\n\t\t\t\th1, h2, h3 {\r\n\t\t\t\t\tmargin-bottom: 1rem;\r\n\t\t\t\t\tcolor: #333;\r\n\t\t\t\t}\r\n\t\t\t\th1 {\r\n\t\t\t\t\tfont-size: 2rem;\r\n\t\t\t\t\tfont-weight: 700;\r\n\t\t\t\t}\r\n\t\t\t\th2 {\r\n\t\t\t\t\tfont-size: 1.5rem;\r\n\t\t\t\t\tfont-weight: 600;\r\n\t\t\t\t}\r\n\t\t\t\t.text-muted {\r\n\t\t\t\t\tcolor: #6c757d;\r\n\t\t\t\t}\r\n\t\t\t\t.mt-2 { margin-top: 1rem; }\r\n\t\t\t\t.mt-3 { margin-top: 1.5rem; }\r\n\t\t\t\t.mb-2 { margin-bottom: 1rem; }\r\n\t\t\t\t.mb-3 { margin-bottom: 1.5rem; }\r\n\t\t\t</style></head><body><div class=\"container\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"/static/script.js\"></script><link rel=\"stylesheet\" href=\"/static/style.css\"></head><body><div class=\"container\"><div id=\"toast-container\" style=\"position: relative;\"></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -79,30 +79,35 @@ func AuthenticatedNav(email, role string) templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<nav><div class=\"nav-links\"><a href=\"/dashboard\"><strong>BattleNet</strong></a> <a href=\"/movies\">Movies</a> <a href=\"/watchlist\">Watchlist</a> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<nav><div class=\"nav-links\"><a href=\"/dashboard\"><strong>LuxMovies</strong></a> <a href=\"/movies\">Movies</a> <a href=\"/watchlist\">Watchlist</a> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if role == "admin" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<a href=\"/admin/movies\">Admin</a>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<a href=\"/admin/movies\">Manage movies</a> <a href=\"/search\">TMDB</a>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else if role == "moderator" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<a href=\"/moderator/users\">Manage users</a>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div><div class=\"nav-links\"><span style=\"color: white; margin-right: 1rem;\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div><div class=\"nav-links\"><span style=\"color: white; margin-right: 1rem;\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(email)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/base.templ`, Line: 212, Col: 58}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/base.templ`, Line: 38, Col: 58}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</span> <a href=\"/profile\" class=\"btn\" style=\"margin-right: 0.5rem;\">Profile</a> <a href=\"/logout\" class=\"btn btn-secondary\">Logout</a></div></nav>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</span> <a href=\"/profile\" class=\"btn\" style=\"margin-right: 0.5rem;\">Profile</a> <a href=\"/logout\" class=\"btn btn-secondary\">Logout</a></div></nav>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -131,7 +136,7 @@ func PublicNav() templ.Component {
 			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<nav><div class=\"nav-links\"><a href=\"/\"><strong>BattleNet</strong></a></div><div class=\"nav-links\"><a href=\"/login\">Login</a> <a href=\"/signup\" class=\"btn\">Sign Up</a></div></nav>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<nav><div class=\"nav-links\"><a href=\"/\"><strong>BattleNet</strong></a></div><div class=\"nav-links\"><a href=\"/login\">Login</a> <a href=\"/signup\" class=\"btn\">Sign Up</a></div></nav>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

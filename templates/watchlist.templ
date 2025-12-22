@@ -21,16 +21,22 @@ templ watchlistContent(email, role string, watchlist []models.WatchlistItem) {
         if len(watchlist) > 0 {
             <div class="movie-grid">
                 for _, item := range watchlist {
-                    <div class="card movie-card">
+                    <div class="card movie-card" data-movie-id={ item.Movie.MovieID.String() }>
+                        <!-- Tik viena nuotrauka -->
                         if item.Movie.PosterPath != nil && *item.Movie.PosterPath != "" {
-                            <img src={ *item.Movie.PosterPath } alt={ item.Movie.Title } class="movie-poster">
-                        } else {
-                            <div style="width: 100%; height: 400px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #666; border-radius: 8px;">
-                                No Image Available
+                            <div style="width: 100%; height: 200px; overflow: hidden;">
+                                <img
+                                    src={ *item.Movie.PosterPath }
+                                    alt={ item.Movie.Title }
+                                    style="width: 100%; height: 100%; object-fit: cover;"
+                                    onerror="this.src='https://via.placeholder.com/300x200?text=No+Poster'"
+                                />
                             </div>
                         }
-                        <div style="padding: 1rem 0;">
+
+                        <div style="padding: 1rem;">
                             <h3>{ item.Movie.Title }</h3>
+
                             <p style="color: #666; margin: 0.5rem 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
                                 if item.Movie.Overview != nil {
                                     { *item.Movie.Overview }
@@ -38,6 +44,7 @@ templ watchlistContent(email, role string, watchlist []models.WatchlistItem) {
                                     No overview available.
                                 }
                             </p>
+
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
                                 if item.Movie.VoteAverage != nil {
                                     <span class="rating">⭐ { Printf("%.1f", *item.Movie.VoteAverage) }</span>
@@ -48,15 +55,23 @@ templ watchlistContent(email, role string, watchlist []models.WatchlistItem) {
                                     Added: { item.AddedAt.Format("Jan 2, 2006") }
                                 </span>
                             </div>
+
                             <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
-                                <a href={ "/movies/" + item.Movie.MovieID.String() } class="btn" style="flex: 1; text-align: center;">
+                                <a
+                                    href={ "/movies/" + item.Movie.MovieID.String() }
+                                    class="btn"
+                                    style="flex: 1; text-align: center;">
                                     View Details
                                 </a>
-                                <form method="POST" action={ "/api/v1/watchlist/" + item.Movie.MovieID.String() } hx-delete="/api/v1/watchlist/{ item.Movie.MovieID.String() }" hx-target="closest .movie-card" hx-swap="outerHTML" style="display: inline;">
-                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Remove from watchlist?')">
-                                        Remove
-                                    </button>
-                                </form>
+
+                                <button
+                                    class="btn btn-danger"
+                                    hx-delete={"/api/v1/watchlist/" + item.Movie.MovieID.String()}
+                                    hx-target="closest .movie-card"
+                                    hx-swap="delete"
+                                    hx-confirm="Remove from watchlist?">
+                                    Remove
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -65,7 +80,9 @@ templ watchlistContent(email, role string, watchlist []models.WatchlistItem) {
         } else {
             <div class="card" style="text-align: center; padding: 3rem;">
                 <h3>Your watchlist is empty</h3>
-                <p class="text-muted">Start adding movies to your watchlist to see them here.</p>
+                <p class="text-muted">
+                    Start adding movies to your watchlist to see them here.
+                </p>
                 <a href="/movies" class="btn mt-2">Browse Movies</a>
             </div>
         }

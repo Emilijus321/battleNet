@@ -1,0 +1,130 @@
+package templates
+
+import (
+    "battleNet/models"
+)
+
+templ ModeratorUsersPage(email, role string, users []models.User, currentUserID string) {
+    @Base("Moderator - User Management", moderatorUsersContent(email, role, users, currentUserID))
+}
+
+templ moderatorUsersContent(email, role string, users []models.User, currentUserID string) {
+    @AuthenticatedNav(email, role)
+
+    <div class="content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <div>
+                <h1>User Management</h1>
+                <p class="text-muted">Moderator panel for managing users</p>
+            </div>
+            <a href="/moderator/dashboard" class="btn btn-secondary">← Moderator Dashboard</a>
+        </div>
+
+        if len(users) > 0 {
+            <div class="card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Username</th>
+                            <th>Role</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        for _, user := range users {
+                            <tr>
+                                <td>
+                                    <strong>{ user.FirstName } { user.LastName }</strong>
+                                    <div style="color: #666; font-size: 0.9rem; margin-top: 0.25rem;">
+                                        ID: { user.UserID.String()[:8] }...
+                                    </div>
+                                </td>
+                                <td>{ user.Email }</td>
+                                <td>{ user.Username }</td>
+                                <td>
+                                    <form method="POST" action="/moderator/users/update-role" style="display: inline;">
+                                        <input type="hidden" name="user_id" value={ user.UserID.String() }>
+                                        <select name="new_role" onchange="this.form.submit()"
+                                                if user.UserID.String() == currentUserID {
+                                                    disabled
+                                                }>
+                                            <option value="user"
+                                                    if user.Role == "user" {
+                                                        selected
+                                                    }
+                                            >
+                                                User
+                                            </option>
+                                            <option value="moderator"
+                                                    if user.Role == "moderator" {
+                                                        selected
+                                                    }
+                                            >
+                                                Moderator
+                                            </option>
+                                            <option value="admin"
+                                                    if user.Role == "admin" {
+                                                        selected
+                                                    }
+                                            >
+                                                Admin
+                                            </option>
+                                        </select>
+                                    </form>
+                                </td>
+                                <td>
+                                    { user.CreatedAt.Format("2006-01-02") }
+                                </td>
+                                <td>
+                                    <div style="display: flex; gap: 0.5rem;">
+                                        if user.UserID.String() != currentUserID {
+                                            <form method="POST" action="/moderator/users/deactivate" style="display: inline;">
+                                                <input type="hidden" name="user_id" value={ user.UserID.String() }>
+                                                <button type="submit" class="btn btn-danger" style="padding: 0.5rem 1rem;"
+                                                        onclick="return confirm('Deactivate user { user.Email }?')">
+                                                    Deactivate
+                                                </button>
+                                            </form>
+                                        } else {
+                                            <span class="text-muted">(You)</span>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        } else {
+            <div class="card" style="text-align: center; padding: 3rem;">
+                <h3>No users found</h3>
+                <p class="text-muted">No active users in the system.</p>
+            </div>
+        }
+
+        <div class="card" style="margin-top: 2rem;">
+            <h3>Moderator Permissions</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                <div style="padding: 1rem; background: #f8f9fa; border-radius: 6px;">
+                    <strong>✓ Can Change Roles</strong>
+                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">User ↔ Moderator ↔ Admin</p>
+                </div>
+                <div style="padding: 1rem; background: #f8f9fa; border-radius: 6px;">
+                    <strong>✓ Can Deactivate Users</strong>
+                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">Except own account</p>
+                </div>
+                <div style="padding: 1rem; background: #f8f9fa; border-radius: 6px;">
+                    <strong>✗ Cannot Edit Movies</strong>
+                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">Admin only feature</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 2rem;">
+            <a href="/dashboard" class="btn btn-secondary">← Back to Dashboard</a>
+        </div>
+    </div>
+}

@@ -72,14 +72,60 @@ func (r *MovieRepository) GetMovieByID(ctx context.Context, movieID uuid.UUID) (
 
 func (r *MovieRepository) CreateMovie(ctx context.Context, movie *models.Movie) error {
 	query := `
-		INSERT INTO movie (title, overview, release_date, poster_path, backdrop_path,
-		                   vote_average, vote_count, popularity, runtime, status)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-		RETURNING movie_id, created_at
-	`
+        INSERT INTO movie (imdb_id, title, overview, release_date, poster_path, backdrop_path,
+                           vote_average, vote_count, popularity, runtime, status)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+        RETURNING movie_id, created_at
+    `
+
+	// Jei IMDB ID tuščias, įrašome NULL
+	var imdbID interface{}
+	if movie.ImdbID != nil && *movie.ImdbID != "" {
+		imdbID = *movie.ImdbID
+	} else {
+		imdbID = nil
+	}
 
 	return r.pool.QueryRow(ctx, query,
-		movie.Title, movie.Overview, movie.ReleaseDate, movie.PosterPath, movie.BackdropPath,
-		movie.VoteAverage, movie.VoteCount, movie.Popularity, movie.Runtime, movie.Status,
+		imdbID,             // $1 - IMDB ID arba NULL
+		movie.Title,        // $2
+		movie.Overview,     // $3
+		movie.ReleaseDate,  // $4
+		movie.PosterPath,   // $5 - gali būti NULL
+		movie.BackdropPath, // $6 - gali būti NULL
+		movie.VoteAverage,  // $7
+		movie.VoteCount,    // $8
+		movie.Popularity,   // $9
+		movie.Runtime,      // $10
+		movie.Status,       // $11
 	).Scan(&movie.MovieID, &movie.CreatedAt)
+}
+
+// UpdateMovie atnaujina filmą
+func (r *MovieRepository) UpdateMovie(ctx context.Context, movieID uuid.UUID, movie *models.Movie) error {
+	query := `
+        UPDATE movie
+        SET title = $2, overview = $3, release_date = $4, 
+            vote_average = $5, runtime = $6, status = $7
+        WHERE movie_id = $1
+    `
+
+	_, err := r.pool.Exec(ctx, query,
+		movieID,
+		movie.Title,
+		movie.Overview,
+		movie.ReleaseDate,
+		movie.VoteAverage,
+		movie.Runtime,
+		movie.Status,
+	)
+
+	return err
+}
+
+// DeleteMovie ištrina filmą
+func (r *MovieRepository) DeleteMovie(ctx context.Context, movieID uuid.UUID) error {
+	query := `DELETE FROM movie WHERE movie_id = $1`
+	_, err := r.pool.Exec(ctx, query, movieID)
+	return err
 }

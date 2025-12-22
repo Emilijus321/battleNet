@@ -11,6 +11,8 @@ type Config struct {
 	Port        string
 	JWTSecret   string
 	Environment string
+	TMDBAPIKey  string
+	TMDBBaseURL string
 }
 
 func Load() *Config {
@@ -24,6 +26,8 @@ func Load() *Config {
 		Port:        port,
 		JWTSecret:   getEnv("JWT_SECRET", "your-super-secret-jwt-key-change-this-in-production"),
 		Environment: getEnv("ENVIRONMENT", "development"),
+		TMDBAPIKey:  getEnv("TMDB_API_KEY", "454e2fb464bfab80451faca174310afc"),
+		TMDBBaseURL: getEnv("TMDB_BASE_URL", "https://api.themoviedb.org/3"),
 	}
 }
 

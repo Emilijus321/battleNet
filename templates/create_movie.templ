@@ -31,19 +31,9 @@ templ createMovieContent(email, role string) {
                         <input type="date" id="release_date" name="release_date">
                     </div>
 
-                    <div class="form-group">
-                        <label for="poster_path">Poster URL</label>
-                        <input type="url" id="poster_path" name="poster_path" placeholder="https://example.com/poster.jpg">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="backdrop_path">Backdrop URL</label>
-                        <input type="url" id="backdrop_path" name="backdrop_path" placeholder="https://example.com/backdrop.jpg">
-                    </div>
-
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                         <div class="form-group">
-                            <label for="vote_average">Rating</label>
+                            <label for="vote_average">Rating (0-10)</label>
                             <input type="number" id="vote_average" name="vote_average" step="0.1" min="0" max="10" placeholder="0.0">
                         </div>
 
@@ -54,10 +44,6 @@ templ createMovieContent(email, role string) {
                     </div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                        <div class="form-group">
-                            <label for="popularity">Popularity</label>
-                            <input type="number" id="popularity" name="popularity" step="0.1" min="0" placeholder="0.0">
-                        </div>
 
                         <div class="form-group">
                             <label for="runtime">Runtime (minutes)</label>
@@ -74,11 +60,6 @@ templ createMovieContent(email, role string) {
                             <option value="Planned">Planned</option>
                             <option value="Cancelled">Cancelled</option>
                         </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="imdb_id">IMDB ID</label>
-                        <input type="text" id="imdb_id" name="imdb_id" placeholder="tt1234567">
                     </div>
 
                     <button type="submit" class="btn" style="width: 100%;">Add Movie</button>

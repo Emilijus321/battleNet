@@ -1,6 +1,9 @@
 package templates
 
-import "battleNet/models"
+import (
+	"battleNet/models"
+	"fmt"
+)
 
 templ MoviesPage(email, role string, movies []models.Movie) {
     @Base("Movies", moviesContent(email, role, movies))
@@ -23,44 +26,85 @@ templ moviesContent(email, role string, movies []models.Movie) {
         <div class="movie-grid">
             for _, movie := range movies {
                 <div class="card movie-card">
+                    <!-- Filmų nuotrauka -->
                     if movie.PosterPath != nil && *movie.PosterPath != "" {
-                        <img src={ *movie.PosterPath } alt={ movie.Title } class="movie-poster">
+                        <div class="movie-poster-container">
+                            <img
+                                src={ *movie.PosterPath }
+                                alt={ movie.Title + " poster" }
+                                class="movie-poster"
+                                onerror="this.src='https://via.placeholder.com/300x450?text=No+Poster'; this.onerror=null;"
+                            />
+                        </div>
                     } else {
-                        <div style="width: 100%; height: 400px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #666; border-radius: 8px;">
-                            No Image Available
+                        <div class="movie-poster-placeholder">
+                            <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #666;">
+                                No Image
+                            </div>
                         </div>
                     }
-                    <div style="padding: 1rem 0;">
+
+                    <div class="movie-info">
                         <h3>{ movie.Title }</h3>
-                        <p style="color: #666; margin: 0.5rem 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
-                            if movie.Overview != nil {
-                                { *movie.Overview }
-                            } else {
-                                No overview available.
-                            }
-                        </p>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+
+                        <!-- Reitingas ir trukmė -->
+                        <div class="movie-meta">
                             if movie.VoteAverage != nil {
-                                <span class="rating">⭐ { Printf("%.1f", *movie.VoteAverage) }</span>
+                                <span class="rating">
+                                    ⭐ { fmt.Sprintf("%.1f", *movie.VoteAverage) }
+                                    if movie.VoteCount != nil {
+                                        <span class="vote-count">({ *movie.VoteCount })</span>
+                                    }
+                                </span>
                             } else {
                                 <span class="rating">⭐ N/A</span>
                             }
-                            if movie.VoteCount != nil {
-                                <span style="color: #666;">{ *movie.VoteCount } votes</span>
+
+                            if movie.Runtime != nil && *movie.Runtime > 0 {
+                                <span class="runtime">
+                                    • { *movie.Runtime } min
+                                </span>
                             }
                         </div>
-                        if movie.ReleaseDate != nil {
-                            <p style="margin-top: 0.5rem; color: #666; font-size: 0.9rem;">
-                                Released: { movie.ReleaseDate.Format("January 2, 2006") }
-                            </p>
-                        }
-                        <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
-                            <a href={ "/movies/" + movie.MovieID.String() } class="btn" style="flex: 1; text-align: center;">
+
+                        <!-- Aprašymas -->
+                        <div class="movie-overview">
+                            if movie.Overview != nil && *movie.Overview != "" {
+                                { truncateText(*movie.Overview, 120) }
+                            } else {
+                                <span class="text-muted">No overview available.</span>
+                            }
+                        </div>
+
+                        <!-- Išleidimo data ir statusas -->
+                        <div class="movie-details">
+                            if movie.ReleaseDate != nil {
+                                <div class="release-date">
+                                    <strong>Released:</strong> { movie.ReleaseDate.Format("2006") }
+                                </div>
+                            }
+
+                            if movie.Status != nil {
+                                <div class="movie-status" style={ getStatusStyle(*movie.Status) }>
+                                    { *movie.Status }
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Mygtukai -->
+                        <div class="movie-actions">
+                            <a href={ "/movies/" + movie.MovieID.String() }
+                               class="btn btn-primary">
                                 View Details
                             </a>
-                            <form method="POST" action="/watchlist/add" style="display: inline;">
+                            <form method="POST"
+                                  action="/watchlist/add"
+                                  class="watchlist-form">
                                 <input type="hidden" name="movie_id" value={ movie.MovieID.String() }>
-                                <button type="submit" class="btn" style="background: #28a745;">+ Watchlist</button>
+                                <button type="submit"
+                                        class="btn btn-success">
+                                    + Watchlist
+                                </button>
                             </form>
                         </div>
                     </div>
@@ -69,7 +113,7 @@ templ moviesContent(email, role string, movies []models.Movie) {
         </div>
 
         if len(movies) == 0 {
-            <div class="card" style="text-align: center; padding: 3rem;">
+            <div class="card no-movies">
                 <h3>No movies found</h3>
                 <p class="text-muted">There are no movies in the database yet.</p>
                 if role == "admin" {
@@ -78,4 +122,26 @@ templ moviesContent(email, role string, movies []models.Movie) {
             </div>
         }
     </div>
+}
+
+// Pagalbinė funkcija trumpinti tekstą
+func truncateText(text string, maxLength int) string {
+    if len(text) <= maxLength {
+        return text
+    }
+    return text[:maxLength] + "..."
+}
+
+// Statuso stiliaus funkcija
+func getStatusStyle(status string) string {
+    switch status {
+    case "Released":
+        return "background: #28a745;"
+    case "In Production":
+        return "background: #17a2b8;"
+    case "Post Production":
+        return "background: #ffc107; color: black;"
+    default:
+        return "background: #6c757d;"
+    }
 }

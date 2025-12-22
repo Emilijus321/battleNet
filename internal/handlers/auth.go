@@ -53,6 +53,7 @@ func (h *Handler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	h.sessionManager.Put(r.Context(), "email", user.Email)
 	h.sessionManager.Put(r.Context(), "role", user.Role)
 	h.sessionManager.Put(r.Context(), "name", user.FirstName+" "+user.LastName)
+	h.sessionManager.Put(r.Context(), "username", user.Username)
 	h.sessionManager.Put(r.Context(), "authenticated", true)
 
 	log.Printf("User logged in: %s (role: %s)", user.Email, user.Role)

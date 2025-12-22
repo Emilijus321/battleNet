@@ -1,0 +1,102 @@
+package templates
+
+import (
+    "battleNet/models"
+    "fmt"
+)
+
+templ EditMoviePage(email, role string, movie models.Movie) {
+    @Base("Edit Movie", editMovieContent(email, role, movie))
+}
+
+templ editMovieContent(email, role string, movie models.Movie) {
+    @AuthenticatedNav(email, role)
+
+    <div class="content">
+        <div style="margin-bottom: 2rem;">
+            <a href="/admin/movies" class="btn btn-secondary">← Back</a>
+        </div>
+
+        <h1>Edit Movie: { movie.Title }</h1>
+
+        <div class="card">
+            <form method="POST" action="/admin/movies/update">
+                <input type="hidden" name="movie_id" value={ movie.MovieID.String() }>
+
+                <div class="form-group">
+                    <label>Title *</label>
+                    <input type="text" name="title" value={ movie.Title } required>
+                </div>
+
+                <div class="form-group">
+                    <label>Overview</label>
+                    if movie.Overview != nil {
+                        <textarea name="overview" rows="4">{ *movie.Overview }</textarea>
+                    } else {
+                        <textarea name="overview" rows="4"></textarea>
+                    }
+                </div>
+
+                <div class="form-group">
+                    <label>Release Date</label>
+                    if movie.ReleaseDate != nil {
+                        <input type="date" name="release_date" value={ movie.ReleaseDate.Format("2006-01-02") }>
+                    } else {
+                        <input type="date" name="release_date">
+                    }
+                </div>
+
+                <div class="form-group">
+                    <label>Rating (0-10)</label>
+                    if movie.VoteAverage != nil {
+                        <input type="number" name="vote_average" min="0" max="10" step="0.1"
+                               value={ fmt.Sprintf("%.1f", *movie.VoteAverage) }>
+                    } else {
+                        <input type="number" name="vote_average" min="0" max="10" step="0.1" value="0.0">
+                    }
+                </div>
+
+                <div class="form-group">
+                    <label>Runtime (minutes)</label>
+                    if movie.Runtime != nil {
+                        <input type="number" name="runtime" min="1" value={ fmt.Sprintf("%d", *movie.Runtime) }>
+                    } else {
+                        <input type="number" name="runtime" min="1" value="120">
+                    }
+                </div>
+
+                <div class="form-group">
+                    <label>Status</label>
+                    <select name="status">
+                        <option value="Released"
+                                if movie.Status != nil && *movie.Status == "Released" {
+                                    selected
+                                }
+                        >
+                            Released
+                        </option>
+                        <option value="Post Production"
+                                if movie.Status != nil && *movie.Status == "Post Production" {
+                                    selected
+                                }
+                        >
+                            Post Production
+                        </option>
+                        <option value="In Production"
+                                if movie.Status != nil && *movie.Status == "In Production" {
+                                    selected
+                                }
+                        >
+                            In Production
+                        </option>
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn">Update Movie</button>
+                    <a href="/admin/movies" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+}

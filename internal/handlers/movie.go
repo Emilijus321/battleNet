@@ -25,8 +25,9 @@ func (h *Handler) HandleDashboard(w http.ResponseWriter, r *http.Request) {
 	userID := h.sessionManager.GetString(r.Context(), "userID")
 	role := h.sessionManager.GetString(r.Context(), "role")
 	name := h.sessionManager.GetString(r.Context(), "name")
+	username := h.sessionManager.GetString(r.Context(), "username")
 
-	component := templates.DashboardPage(email, userID, role, name)
+	component := templates.DashboardPage(email, userID, role, name, username)
 	component.Render(r.Context(), w)
 }
 
@@ -35,8 +36,9 @@ func (h *Handler) HandleProfile(w http.ResponseWriter, r *http.Request) {
 	email := h.sessionManager.GetString(r.Context(), "email")
 	name := h.sessionManager.GetString(r.Context(), "name")
 	role := h.sessionManager.GetString(r.Context(), "role")
+	username := h.sessionManager.GetString(r.Context(), "username")
 
-	component := templates.ProfilePage(email, name, role)
+	component := templates.ProfilePage(email, name, role, username)
 	component.Render(r.Context(), w)
 }
 

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -154,10 +155,61 @@ func (h *Handler) HandleAPIRemoveFromWatchlist(w http.ResponseWriter, r *http.Re
 	err = h.watchlistRepo.RemoveFromWatchlist(r.Context(), userID, movieID)
 	if err != nil {
 		log.Printf("Error removing from watchlist via API: %v", err)
-		http.Error(w, `{"error": "Failed to remove from watchlist"}`, http.StatusInternalServerError)
+		w.Header().Set("Content-Type", "text/html")
+		w.Write([]byte(`
+<div hx-swap-oob="beforeend:#toast-container">
+    <div class="toast toast-error">
+        Failed to remove from watchlist
+        <button class="close" onclick="this.parentElement.remove()">×</button>
+    </div>
+</div>
+`))
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"message": "Movie removed from watchlist"})
+	// Return both: the removed movie card and success toast
+	w.Header().Set("Content-Type", "text/html")
+	w.Write([]byte(`
+<div hx-swap-oob="delete:.movie-card[data-movie-id='` + movieIDStr + `']"></div>
+<div hx-swap-oob="beforeend:#toast-container">
+    <div class="toast toast-success">
+        Movie was successfully removed from watchlist
+        <button class="close" onclick="this.parentElement.remove()">×</button>
+    </div>
+</div>
+`))
+}
+
+// HandleRemoveFromWatchlist removes movie from watchlist (HTML form)
+func (h *Handler) HandleRemoveFromWatchlist(w http.ResponseWriter, r *http.Request) {
+	userIDStr := h.sessionManager.GetString(r.Context(), "userID")
+	movieIDStr := r.FormValue("movie_id")
+
+	if userIDStr == "" || movieIDStr == "" {
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	userID, err := uuid.Parse(userIDStr)
+	if err != nil {
+		http.Error(w, "Invalid user session", http.StatusUnauthorized)
+		return
+	}
+
+	movieID, err := uuid.Parse(movieIDStr)
+	if err != nil {
+		http.Error(w, "Invalid movie ID", http.StatusBadRequest)
+		return
+	}
+
+	err = h.watchlistRepo.RemoveFromWatchlist(r.Context(), userID, movieID)
+	if err != nil {
+		log.Printf("Error removing from watchlist: %v", err)
+		// Galite grąžinti error puslapį arba redirect su flash message
+		http.Error(w, "Failed to remove from watchlist", http.StatusInternalServerError)
+		return
+	}
+
+	// Redirect back to movie page
+	http.Redirect(w, r, fmt.Sprintf("/movies/%s", movieIDStr), http.StatusSeeOther)
 }

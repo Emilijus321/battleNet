@@ -1,0 +1,346 @@
+package templates
+
+import (
+    "strconv"
+    "battleNet/external/tmdb"
+)
+
+templ SearchMoviesPage(email, role string, movies []tmdb.TMDBMovie, query string, currentPage, totalPages int) {
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Search Movies - TMDB</title>
+        <link rel="stylesheet" href="/static/style.css">
+        <style>
+            .search-form {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 30px;
+            }
+
+            .search-form input {
+                flex: 1;
+                padding: 12px 15px;
+                font-size: 16px;
+                border: 2px solid #ddd;
+                border-radius: 5px;
+            }
+
+            .tmdb-movies-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 25px;
+                margin-top: 20px;
+            }
+
+            .tmdb-movie-card {
+                background: white;
+                border-radius: 10px;
+                overflow: hidden;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                transition: transform 0.3s ease;
+                border: 1px solid #e0e0e0;
+            }
+
+            .tmdb-movie-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+            }
+
+            .tmdb-movie-poster {
+                width: 100%;
+                height: 375px;
+                object-fit: cover;
+            }
+
+            .tmdb-movie-info {
+                padding: 15px;
+            }
+
+            .tmdb-movie-title {
+                font-size: 18px;
+                font-weight: bold;
+                margin-bottom: 8px;
+                color: #333;
+            }
+
+            .tmdb-movie-meta {
+                color: #6c757d;
+                font-size: 14px;
+                margin-bottom: 10px;
+            }
+
+            .tmdb-movie-rating {
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                margin-bottom: 10px;
+                color: #555;
+            }
+
+            .rating-star {
+                color: #ffc107;
+            }
+
+            .tmdb-actions {
+                display: flex;
+                gap: 10px;
+                margin-top: 15px;
+            }
+
+            .tmdb-badge {
+                display: inline-block;
+                background: #01b4e4;
+                color: white;
+                padding: 3px 8px;
+                border-radius: 3px;
+                font-size: 12px;
+                margin-left: 10px;
+            }
+
+            .pagination {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 20px;
+                margin-top: 40px;
+                padding: 20px;
+            }
+
+            .pagination a {
+                padding: 10px 20px;
+                background: #667eea;
+                color: white;
+                text-decoration: none;
+                border-radius: 6px;
+            }
+
+            .pagination a:hover {
+                background: #5568d3;
+            }
+
+            .pagination span {
+                font-size: 16px;
+                color: #666;
+            }
+
+            .no-results {
+                text-align: center;
+                padding: 50px;
+                color: #666;
+                font-size: 18px;
+            }
+
+            .search-info {
+                margin-bottom: 20px;
+                padding-bottom: 15px;
+                border-bottom: 2px solid #f0f0f0;
+            }
+
+            .tag {
+                background: #e9ecef;
+                color: #495057;
+                padding: 5px 10px;
+                border-radius: 4px;
+                text-decoration: none;
+                display: inline-block;
+                margin: 5px;
+                transition: background 0.3s;
+            }
+
+            .tag:hover {
+                background: #dee2e6;
+            }
+
+            .subtitle {
+                color: #6c757d;
+                margin-bottom: 20px;
+            }
+
+            footer {
+                margin-top: 40px;
+                padding: 20px;
+                text-align: center;
+                color: #6c757d;
+                border-top: 1px solid #e0e0e0;
+            }
+
+            .footer-content a {
+                color: #667eea;
+                text-decoration: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <nav>
+                <div class="nav-links">
+                    <a href="/dashboard">Back</a>
+                </div>
+                if email != "" {
+                    <a href="/logout" class="btn">Logout</a>
+                } else {
+                    <div>
+                        <a href="/login" class="btn btn-secondary">Login</a>
+                        <a href="/signup" class="btn">Signup</a>
+                    </div>
+                }
+            </nav>
+
+            <div class="content">
+                <h1>Search Movies on TMDB</h1>
+                <p class="subtitle">Search from The Movie Database</p>
+
+                <form method="GET" action="/search" class="search-form">
+                    <input
+                        type="text"
+                        name="q"
+                        placeholder="Enter movie title (e.g., Inception, Avatar, Titanic...)"
+                        value={ query }
+                        required
+                        autocomplete="off"
+                    />
+                    <button type="submit" class="btn">Search</button>
+                </form>
+
+                if query != "" {
+                    <div class="search-info">
+                        <h3>Search results for: "{ query }"</h3>
+                    </div>
+                } else {
+                    <div class="search-info">
+                        <h3>Popular Movies <span class="tmdb-badge">TMDB</span></h3>
+                    </div>
+                }
+
+                if movies != nil && len(movies) > 0 {
+                    <p>Found { strconv.Itoa(len(movies)) } movies</p>
+
+                    <div class="tmdb-movies-grid">
+                        for _, movie := range movies {
+                            <div class="tmdb-movie-card">
+                                if movie.PosterPath != "" {
+                                    <img
+                                        src={ "https://image.tmdb.org/t/p/w500" + movie.PosterPath }
+                                        alt={ movie.Title }
+                                        class="tmdb-movie-poster"
+                                        onerror="this.src='https://via.placeholder.com/500x750?text=No+Poster'"
+                                    />
+                                } else {
+                                    <div class="tmdb-movie-poster" style="background: #f8f9fa; display: flex; align-items: center; justify-content: center; color: #6c757d;">
+                                        No poster available
+                                    </div>
+                                }
+
+                                <div class="tmdb-movie-info">
+                                    <h3 class="tmdb-movie-title">{ movie.Title }</h3>
+
+                                    if movie.ReleaseDate != "" {
+                                        <div class="tmdb-movie-meta">
+                                            if len(movie.ReleaseDate) >= 4 {
+                                                Year: { movie.ReleaseDate[:4] }
+                                            } else {
+                                                Year: Unknown
+                                            }
+                                            if movie.Runtime > 0 {
+                                                | Runtime: { strconv.Itoa(movie.Runtime) } min
+                                            }
+                                        </div>
+                                    }
+
+                                    <div class="tmdb-movie-rating">
+                                        <span class="rating-star">★</span>
+                                        <span>{ strconv.FormatFloat(movie.VoteAverage, 'f', 1, 64) }/10</span>
+                                        <span>({ strconv.Itoa(movie.VoteCount) } votes)</span>
+                                    </div>
+
+                                    if movie.Overview != "" {
+                                        <p class="text-muted" style="margin-bottom: 15px; font-size: 14px; line-height: 1.4;">
+                                            if len(movie.Overview) > 100 {
+                                                { movie.Overview[:100] }...
+                                            } else {
+                                                { movie.Overview }
+                                            }
+                                        </p>
+                                    }
+
+                                    <div class="tmdb-actions">
+                                        <a
+                                            href={ templ.URL("https://www.themoviedb.org/movie/" + strconv.Itoa(movie.ID)) }
+                                            target="_blank"
+                                            class="btn"
+                                            style="flex: 1; text-align: center; padding: 8px 15px; font-size: 14px;"
+                                        >
+                                            View on TMDB
+                                        </a>
+
+                                        if role == "admin" || role == "moderator" {
+                                            <form
+                                                method="POST"
+                                                action="/admin/movies/import"
+                                                onsubmit="return confirm('Import this movie to your database?')"
+                                                style="flex: 1; margin: 0;"
+                                            >
+                                                <input type="hidden" name="tmdb_id" value={ strconv.Itoa(movie.ID) }/>
+                                                <button type="submit" class="btn btn-watchlist" style="width: 100%; padding: 8px 15px; font-size: 14px;">
+                                                    Import
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    if totalPages > 1 {
+                        <div class="pagination">
+                            if currentPage > 1 {
+                                <a href={ templ.URL("/search?q=" + query + "&page=" + strconv.Itoa(currentPage-1)) }>← Previous</a>
+                            }
+
+                            <span>Page { strconv.Itoa(currentPage) } of { strconv.Itoa(totalPages) }</span>
+
+                            if currentPage < totalPages {
+                                <a href={ templ.URL("/search?q=" + query + "&page=" + strconv.Itoa(currentPage+1)) }>Next →</a>
+                            }
+                        </div>
+                    }
+                } else if query != "" {
+                    <div class="no-results">
+                        <p>No movies found for "{ query }"</p>
+                        <p>Try a different search term</p>
+                    </div>
+                } else {
+                    <div class="no-results">
+                        <h3>Welcome to TMDB Search!</h3>
+                        <p>Enter a movie title in the search box above to get started.</p>
+                        <p>You can search for any movie in the TMDB database.</p>
+
+                        <div style="margin-top: 30px; color: #666;">
+                            <h4>Popular searches:</h4>
+                            <div style="margin-top: 10px;">
+                                <a href="/search?q=inception" class="tag">Inception</a>
+                                <a href="/search?q=avatar" class="tag">Avatar</a>
+                                <a href="/search?q=avengers" class="tag">Avengers</a>
+                                <a href="/search?q=titanic" class="tag">Titanic</a>
+                                <a href="/search?q=star+wars" class="tag">Star Wars</a>
+                                <a href="/search?q=lord+of+the+rings" class="tag">Lord of the Rings</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <footer>
+                <div class="footer-content">
+                    <p>Powered by <a href="https://www.themoviedb.org/" target="_blank">The Movie Database (TMDB)</a></p>
+                    <p>© 2024 MovieApp. This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
+                </div>
+            </footer>
+        </div>
+    </body>
+    </html>
+}

@@ -101,25 +101,3 @@ func RequireRoleAPI(sm *scs.SessionManager, allowedRoles ...string) func(http.Ha
 		})
 	}
 }
-
-// Helper functions to get values from context
-func GetUserIDFromContext(ctx context.Context) string {
-	if userID, ok := ctx.Value(UserIDKey).(string); ok {
-		return userID
-	}
-	return ""
-}
-
-func GetEmailFromContext(ctx context.Context) string {
-	if email, ok := ctx.Value(EmailKey).(string); ok {
-		return email
-	}
-	return ""
-}
-
-func GetRoleFromContext(ctx context.Context) string {
-	if role, ok := ctx.Value(RoleKey).(string); ok {
-		return role
-	}
-	return ""
-}

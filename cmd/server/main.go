@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"battleNet/config"
+	"battleNet/external/tmdb"
 	"battleNet/internal/handlers"
 	"battleNet/middlewaree"
 	"battleNet/repository"
@@ -41,6 +42,8 @@ func main() {
 	// Initialize session manager
 	initSessionManager()
 
+	tmdbClient := tmdb.NewClient(cfg.TMDBAPIKey, cfg.TMDBBaseURL)
+
 	// Create repository instances
 	userRepo := repository.NewUserRepository(db.Pool)
 	movieRepo := repository.NewMovieRepository(db.Pool)
@@ -48,7 +51,7 @@ func main() {
 	watchlistRepo := repository.NewWatchlistRepository(db.Pool)
 
 	// Initialize handlers
-	handler := handlers.NewHandler(userRepo, movieRepo, reviewRepo, watchlistRepo, cfg.JWTSecret, sessionManager)
+	handler := handlers.NewHandler(userRepo, movieRepo, reviewRepo, watchlistRepo, cfg.JWTSecret, sessionManager, tmdbClient)
 
 	// Setup router
 	router := setupRouter(handler)
@@ -64,6 +67,7 @@ func main() {
 		log.Printf("🌐 Frontend: http://localhost:%s", cfg.Port)
 		log.Printf("🔗 API: http://localhost:%s/api/v1", cfg.Port)
 		log.Printf("📊 Environment: %s", cfg.Environment)
+		log.Printf("🎬 TMDB API Key: %s", cfg.TMDBAPIKey[:10]+"...")
 
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("❌ Server failed: %v", err)
@@ -115,7 +119,7 @@ func setupRouter(handler *handlers.Handler) *chi.Mux {
 	}))
 
 	// Static files
-	r.Handle("/static/*", http.StripPrefix("/static", http.FileServer(http.Dir("static"))))
+	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	// Public routes
 	r.Get("/", handler.HandleHome)
@@ -123,6 +127,7 @@ func setupRouter(handler *handlers.Handler) *chi.Mux {
 	r.Post("/login", handler.HandleLogin)
 	r.Get("/signup", handler.HandleSignupPage)
 	r.Post("/signup", handler.HandleSignup)
+	r.Get("/search", handler.HandleSearchMovies)
 
 	// Protected routes
 	r.Group(func(r chi.Router) {
@@ -136,6 +141,11 @@ func setupRouter(handler *handlers.Handler) *chi.Mux {
 		r.Get("/watchlist", handler.HandleWatchlist)
 		r.Post("/watchlist/add", handler.HandleAddToWatchlist)
 		r.Post("/reviews", handler.HandleCreateReview)
+		r.Post("/watchlist/remove", handler.HandleRemoveFromWatchlist)
+		r.Get("/profile/edit", handler.HandleEditProfilePage)
+		r.Post("/profile/edit", handler.HandleUpdateProfile)
+		r.Get("/profile/change-password", handler.HandleChangePasswordPage)
+		r.Post("/profile/change-password", handler.HandleChangePassword)
 
 		// Admin routes
 		r.Group(func(r chi.Router) {
@@ -144,7 +154,22 @@ func setupRouter(handler *handlers.Handler) *chi.Mux {
 			r.Get("/admin/movies", handler.HandleAdminMovies)
 			r.Get("/admin/movies/create", handler.HandleCreateMoviePage)
 			r.Post("/admin/movies/create", handler.HandleCreateMovie)
-			r.Get("/admin/users", handler.HandleAdminUsers)
+			r.Get("/admin/movies/edit", handler.HandleEditMoviePage)
+			r.Post("/admin/movies/update", handler.HandleUpdateMovie)
+			r.Post("/admin/movies/delete", handler.HandleDeleteMovie)
+
+			r.Post("/admin/movies/import", handler.HandleImportMovie)
+		})
+
+		r.Group(func(r chi.Router) {
+			r.Use(middlewaree.RequireRole(sessionManager, "moderator"))
+
+			r.Get("/moderator/dashboard", handler.HandleModeratorDashboard)
+			r.Get("/moderator/users", handler.HandleModeratorUsers)
+			r.Post("/moderator/users/update-role", handler.HandleModeratorUpdateRole)
+			r.Post("/moderator/users/deactivate", handler.HandleModeratorDeactivateUser)
+
+			r.Post("/moderator/movies/import", handler.HandleImportMovie)
 		})
 	})
 
@@ -154,6 +179,7 @@ func setupRouter(handler *handlers.Handler) *chi.Mux {
 		r.Get("/movies", handler.HandleAPIMovies)
 		r.Get("/movies/{id}", handler.HandleAPIMovieDetail)
 		r.Get("/reviews", handler.HandleAPIReviews)
+		r.Get("/tmdb/search", handler.HandleAPISearchMovies)
 
 		// Protected API endpoints
 		r.Group(func(r chi.Router) {
@@ -163,6 +189,15 @@ func setupRouter(handler *handlers.Handler) *chi.Mux {
 			r.Get("/watchlist", handler.HandleAPIWatchlist)
 			r.Post("/watchlist", handler.HandleAPIAddToWatchlist)
 			r.Delete("/watchlist/{movieId}", handler.HandleAPIRemoveFromWatchlist)
+		})
+
+		//Moderator API endpoints
+		r.Group(func(r chi.Router) {
+			r.Use(middlewaree.RequireRoleAPI(sessionManager, "moderator"))
+
+			r.Get("/moderator/users", handler.HandleAPIModeratorUsers)
+			r.Put("/moderator/users/{id}/role", handler.HandleAPIModeratorUpdateRole)
+			r.Delete("/moderator/users/{id}", handler.HandleAPIModeratorDeactivateUser)
 		})
 
 		// Admin API endpoints
